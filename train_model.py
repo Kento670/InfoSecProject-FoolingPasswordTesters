@@ -36,10 +36,10 @@ model = get_peft_model(model, lora_config)
 
 training_args = TrainingArguments(
     output_dir=OUTPUT_PATH,
-    per_device_train_batch_size=2,
+    per_device_train_batch_size=1,
     num_train_epochs=2,
-    logging_steps=10,
-    save_steps=50,
+    logging_steps=25,
+    save_steps=100,
     dataloader_pin_memory=False,
     fp16=False
 )
