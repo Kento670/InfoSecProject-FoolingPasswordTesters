@@ -4,7 +4,7 @@ from zxcvbn import zxcvbn
 CLEAN_DATASET_PATH = "data/processed_dataset/combined_passwords.csv"
 TRAINING_DATASET_PATH = "data/training_dataset/training_dataset.csv"
 
-ZXCVBN_LIMIT = 3
+ZXCVBN_LIMIT = 4
 
 df = pd.read_csv(CLEAN_DATASET_PATH)
 

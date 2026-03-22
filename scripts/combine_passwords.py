@@ -7,7 +7,7 @@ TRAINING_DATASET_PATH = "data/processed_dataset/combined_passwords.csv"
 df = pd.read_csv(CLEAN_DATASET_PATH)
 passwords = df['password'].tolist()[:50]
 
-adversarial = df['password'].tolist()
+adversarial = []
 
 for i in range(len(passwords)):
     if i % 10 == 0:
@@ -23,5 +23,10 @@ for i in range(len(passwords)):
         adversarial.append(combinedPass2)
 
 
-pd.DataFrame(adversarial, columns=['password']).to_csv(TRAINING_DATASET_PATH, index=False)
+df = pd.DataFrame(adversarial, columns=['password'])
+
+df = df.drop_duplicates()
+
+df.to_csv(TRAINING_DATASET_PATH, index=False)
+
 print("Adversarial dataset created")
