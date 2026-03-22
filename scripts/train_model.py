@@ -16,26 +16,10 @@ if tokenizer.pad_token is None:
 dataset = load_dataset("json", data_files=DATA_PATH)["train"]
 
 def tokenize(example):
-    prompt = example["prompt"] + "\n"
-    completion = example["completion"] + tokenizer.eos_token
-
-    prompt_tokens = tokenizer(prompt, add_special_tokens=False)["input_ids"]
-    completion_tokens = tokenizer(completion, add_special_tokens=False)["input_ids"]
-
-    input_ids = prompt_tokens + completion_tokens
-
-    labels = [-100] * len(prompt_tokens) + completion_tokens
-
-    pad_len = 512 - len(input_ids)
-    input_ids = input_ids + [tokenizer.pad_token_id] * pad_len
-    labels = labels + [-100] * pad_len
-    attention_mask = [1] * (512 - pad_len) + [0] * pad_len
-
-    return {
-        "input_ids": input_ids[:512],
-        "attention_mask": attention_mask[:512],
-        "labels": labels[:512]
-    }
+    text = example["prompt"] + "\n" + example["completion"]
+    tokens = tokenizer(text, truncation=True, padding="max_length", max_length=512)
+    tokens["labels"] = tokens["input_ids"].copy()
+    return tokens
 
 dataset = dataset.map(tokenize)
 
