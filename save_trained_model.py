@@ -2,17 +2,17 @@ from transformers import AutoTokenizer
 from peft import PeftModel
 from transformers import AutoModelForCausalLM
 
-CHECKPOINT_PATH = "models/trained_model/checkpoint-300"
-FINAL_MODEL_PATH = "models/final_model"
-BASE_MODEL_NAME = "Qwen/Qwen2-0.5B"
+checkpoint_path = "models/trained_model/checkpoint-300"
+final_model_path = "models/final_model"
+base_model = "Qwen/Qwen2-0.5B"
 
-base_model = AutoModelForCausalLM.from_pretrained(BASE_MODEL_NAME)
+base_model = AutoModelForCausalLM.from_pretrained(base_model)
 
-model = PeftModel.from_pretrained(base_model, CHECKPOINT_PATH)
+model = PeftModel.from_pretrained(base_model, checkpoint_path)
 
-tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_NAME)
+tokenizer = AutoTokenizer.from_pretrained(base_model)
 
-model.save_pretrained(FINAL_MODEL_PATH)
-tokenizer.save_pretrained(FINAL_MODEL_PATH)
+model.save_pretrained(final_model_path)
+tokenizer.save_pretrained(final_model_path)
 
-print(f"Final Model saved to {FINAL_MODEL_PATH}")
+print(f"Done. Final Model saved to {final_model_path}")

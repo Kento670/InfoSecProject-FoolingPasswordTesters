@@ -3,14 +3,14 @@ import pandas as pd
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from peft import PeftModel
 
-BASE_MODEL_NAME = "Qwen/Qwen2-0.5B"
-FINAL_MODEL_PATH = "models/final_model"
-OUTPUT_PATH = "data/generated_passwords/passwords.csv"
+base_model_name = "Qwen/Qwen2-0.5B"
+final_model_path = "models/final_model"
+output_path = "data/generated_passwords/passwords.csv"
 
-base_model = AutoModelForCausalLM.from_pretrained(BASE_MODEL_NAME)
-model = PeftModel.from_pretrained(base_model, FINAL_MODEL_PATH)
+base_model = AutoModelForCausalLM.from_pretrained(base_model_name)
+model = PeftModel.from_pretrained(base_model, final_model_path)
 
-tokenizer = AutoTokenizer.from_pretrained(FINAL_MODEL_PATH)
+tokenizer = AutoTokenizer.from_pretrained(final_model_path)
 
 device = torch.device("cpu")
 model.to(device)
@@ -34,11 +34,12 @@ def generate_password():
     password = tokenizer.decode(generated, skip_special_tokens=True).strip().splitlines()[0]
     return password
 
-num_passwords = 10
+num_passwords = 1000
 generated = [generate_password() for _ in range(num_passwords)]
 
 df = pd.DataFrame(generated, columns=["password"])
-df.to_csv(OUTPUT_PATH, index=False)
+df.to_csv(output_path, index=False)
 
 print("done")
+print(f"Done. Generated Password dataset saved to {output_path}")
 

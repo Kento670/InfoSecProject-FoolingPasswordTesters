@@ -1,13 +1,13 @@
 import pandas as pd
 from zxcvbn import zxcvbn
 
-CLEAN_DATASET_PATH = "data/processed_dataset/cleaned_dataset.csv"
-TRAINING_DATASET_PATH = "data/processed_dataset/combined_passwords.csv"
+processed_dataset_path = "data/processed_dataset/cleaned_dataset.csv"
+training_dataset_path = "data/processed_dataset/combined_passwords.csv"
 
-df = pd.read_csv(CLEAN_DATASET_PATH)
+df = pd.read_csv(processed_dataset_path)
 passwords = df['password'].tolist()[:50]
 
-adversarial = []
+combined_passwords = []
 
 for i in range(len(passwords)):
     if i % 10 == 0:
@@ -19,14 +19,14 @@ for i in range(len(passwords)):
         combinedPass1 = pass1 + pass2
         combinedPass2 = pass2 + pass1
 
-        adversarial.append(combinedPass1)
-        adversarial.append(combinedPass2)
+        combined_passwords.append(combinedPass1)
+        combined_passwords.append(combinedPass2)
 
 
-df = pd.DataFrame(adversarial, columns=['password'])
+df = pd.DataFrame(combined_passwords, columns=['password'])
 
 df = df.drop_duplicates()
 
-df.to_csv(TRAINING_DATASET_PATH, index=False)
+df.to_csv(training_dataset_path, index=False)
 
-print("Adversarial dataset created")
+print(f"Done. Combined Passwords dataset saved to {training_dataset_path}")

@@ -3,17 +3,17 @@ from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments, Trainer
 from peft import LoraConfig, get_peft_model, TaskType
 
-MODEL_NAME = "Qwen/Qwen2-0.5B"
-DATA_PATH = "data/training_dataset/training_dataset.jsonl"
-OUTPUT_PATH = "models/trained_model"
+model_name = "Qwen/Qwen2-0.5B"
+training_dataset_path = "data/training_dataset/training_dataset.jsonl"
+output_path = "models/trained_model"
 
-model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+model = AutoModelForCausalLM.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
 
-dataset = load_dataset("json", data_files=DATA_PATH)["train"]
+dataset = load_dataset("json", data_files=training_dataset_path)["train"]
 
 def tokenize(example):
     text = example["prompt"] + "\n" + example["completion"]
@@ -35,7 +35,7 @@ lora_config = LoraConfig(
 model = get_peft_model(model, lora_config)
 
 training_args = TrainingArguments(
-    output_dir=OUTPUT_PATH,
+    output_dir=output_path,
     per_device_train_batch_size=1,
     num_train_epochs=2,
     logging_steps=25,

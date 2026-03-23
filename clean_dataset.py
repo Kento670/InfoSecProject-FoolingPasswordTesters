@@ -1,13 +1,13 @@
 import pandas as pd
 
-RAW_DATASET_PATH = "data/new_dataset/common_passwords.csv"
-CLEAN_DATASET_PATH = "data/processed_dataset/cleaned_dataset.csv"
-MIN_PASSWORD_LENGTH = 7
+new_dataset_path = "data/new_dataset/common_passwords.csv"
+processed_dataset_path = "data/processed_dataset/cleaned_dataset.csv"
 
-df = pd.read_csv(RAW_DATASET_PATH)
+min_password_length = 7
+df = pd.read_csv(new_dataset_path)
 df = df[['password']]
-df = df[df['password'].str.len() >= MIN_PASSWORD_LENGTH]
+df = df[df['password'].str.len() >= min_password_length]
 df = df.drop_duplicates()
-df.to_csv(CLEAN_DATASET_PATH, index = False)
+df.to_csv(processed_dataset_path, index = False)
 
-print("done")
+print(f"Done. Cleaned dataset saved to {processed_dataset_path}")
