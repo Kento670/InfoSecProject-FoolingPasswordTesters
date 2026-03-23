@@ -34,7 +34,7 @@ def generate_password():
     password = tokenizer.decode(generated, skip_special_tokens=True).strip().splitlines()[0]
     return password
 
-num_passwords = 3000
+num_passwords = 10
 generated = [generate_password() for _ in range(num_passwords)]
 
 df = pd.DataFrame(generated, columns=["password"])
