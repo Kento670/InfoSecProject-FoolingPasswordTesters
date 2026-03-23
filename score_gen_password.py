@@ -13,15 +13,6 @@ scored_passwords = []
 for pw in df['password']:
     pw = str(pw).strip()
 
-    if len(pw) > 16:
-        continue
-
-    if ' ' in pw:
-        continue
-
-    if ':' in pw:
-        continue
-
     if zxcvbn(pw)['score'] >= ZXCVBN_LIMIT:
         scored_passwords.append(pw)
 

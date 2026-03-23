@@ -10,8 +10,6 @@ passwords = df['password'].tolist()[:50]
 combined_passwords = []
 
 for i in range(len(passwords)):
-    if i % 10 == 0:
-        print(f"Processing password {i}/{len(passwords)}")
     for j in range(i + 1, len(passwords)):
         pass1 = passwords[i]
         pass2 = passwords[j]

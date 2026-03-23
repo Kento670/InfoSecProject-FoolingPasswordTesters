@@ -13,5 +13,4 @@ with open(output_path, "w") as f:
         }
         f.write(json.dumps(record) + "\n")
     
-print("JSONL file created")
 print(f"Training JSONL file created and saved to {output_path}")
