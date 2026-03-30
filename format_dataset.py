@@ -8,8 +8,8 @@ df = pd.read_csv(input_path)
 with open(output_path, "w") as f:
     for pw in df['password']:
         record = {
-            "prompt": "Generate a password that fools a strength meter:",
-            "completion": pw
+            "instruction": "Generate a password that fools a strength meter:",
+            "response": pw
         }
         f.write(json.dumps(record) + "\n")
     

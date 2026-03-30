@@ -16,8 +16,15 @@ if tokenizer.pad_token is None:
 dataset = load_dataset("json", data_files=training_dataset_path)["train"]
 
 def tokenize(example):
-    text = example["prompt"] + "\n" + example["completion"]
-    tokens = tokenizer(text, truncation=True, padding="max_length", max_length=512)
+    text = f"{example['instruction']}\n{example['response']}"\
+    
+    tokens = tokenizer(
+        text, 
+        truncation=True, 
+        padding="max_length", 
+        max_length=256
+        )
+    
     tokens["labels"] = tokens["input_ids"].copy()
     return tokens
 
@@ -40,8 +47,6 @@ training_args = TrainingArguments(
     num_train_epochs=1,
     logging_steps=25,
     save_steps=100,
-    dataloader_pin_memory=False,
-    fp16=False
 )
 
 trainer = Trainer(

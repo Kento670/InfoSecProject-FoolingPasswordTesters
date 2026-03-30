@@ -31,7 +31,7 @@ def generate_password():
     )
 
     generated = outputs[0][prompt_len:] 
-    password = tokenizer.decode(generated, skip_special_tokens=True).strip().splitlines()[0]
+    password = tokenizer.decode(generated, skip_special_tokens=True).strip()
     return password
 
 num_passwords = 1000
@@ -40,6 +40,5 @@ generated = [generate_password() for _ in range(num_passwords)]
 df = pd.DataFrame(generated, columns=["password"])
 df.to_csv(output_path, index=False)
 
-print("done")
 print(f"Done. Generated Password dataset saved to {output_path}")
 
