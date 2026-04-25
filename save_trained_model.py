@@ -2,8 +2,8 @@ from transformers import AutoTokenizer
 from peft import PeftModel
 from transformers import AutoModelForCausalLM
 
-checkpoint_path = "models/trained_model/checkpoint-300"
-final_model_path = "models/final_model"
+checkpoint_path = "models/trained_model/checkpoint-1200"
+final_model_path = "models/final_model/final_model_v1"
 base_model_name = "Qwen/Qwen2-0.5B"
 
 base_model = AutoModelForCausalLM.from_pretrained(base_model_name)
