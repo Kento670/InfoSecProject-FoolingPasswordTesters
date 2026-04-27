@@ -3,8 +3,13 @@ import pandas as pd
 new_dataset_path = "data/new_dataset/common_passwords.csv"
 processed_dataset_path = "data/processed_dataset/cleaned_dataset.csv"
 
-min_password_length = 4
-max_password_length = 6
+
+# v1 = 4 - 6
+# v2 = 6 - 8
+# v3 = 3 - 9
+# v3 = 3 - 9
+min_password_length = 3
+max_password_length = 9
 
 df = pd.read_csv(new_dataset_path)
 df = df[['password']]

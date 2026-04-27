@@ -5,7 +5,7 @@ from peft import PeftModel
 from zxcvbn import zxcvbn
 
 base_model_name = "Qwen/Qwen2-0.5B"
-final_model_path = "models/final_model/final_model_v1"
+final_model_path = "models/final_model/final_model_v4"
 output_path = "data/generated_passwords/verified_passwords.csv"
 
 base_model = AutoModelForCausalLM.from_pretrained(base_model_name)
@@ -36,13 +36,13 @@ def generate_password():
     return password.replace("\n", "").strip()
 
 target = 10000
-batch_size = 250
+batch_size = 200
 zxcvbn_score = 4
 
 strong_passwords = set()
 
 while len(strong_passwords) < target:
-    print(f"Generating batch... Current strong count: {len(strong_passwords)}")
+    print(f"Generating - Current password count: {len(strong_passwords)}")
 
     batch = [generate_password() for _ in range(batch_size)]
 
