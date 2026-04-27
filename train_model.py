@@ -15,6 +15,10 @@ if tokenizer.pad_token is None:
 
 dataset = load_dataset("json", data_files=training_dataset_path)["train"]
 
+dataset = dataset.train_test_split(test_size=0.1)
+train_dataset = dataset["train"]
+eval_dataset = dataset["test"]
+
 def tokenize(example):
     text = f"{example['instruction']}\n{example['response']}"\
     
@@ -28,7 +32,8 @@ def tokenize(example):
     tokens["labels"] = tokens["input_ids"].copy()
     return tokens
 
-dataset = dataset.map(tokenize)
+train_dataset = train_dataset.map(tokenize)
+eval_dataset = eval_dataset.map(tokenize)
 
 lora_config = LoraConfig(
     r=4,
@@ -45,14 +50,16 @@ training_args = TrainingArguments(
     output_dir=output_path,
     per_device_train_batch_size=1,
     num_train_epochs=1,
-    logging_steps=25,
+    logging_steps=100,
     save_steps=100,
+    eval_strategy="steps",
 )
 
 trainer = Trainer(
     model=model,
     args=training_args,
-    train_dataset=dataset
+    train_dataset=train_dataset,
+    eval_dataset=eval_dataset
 )
 
 trainer.train()

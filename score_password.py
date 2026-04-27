@@ -1,10 +1,16 @@
 import pandas as pd
 from zxcvbn import zxcvbn
 
+
 processed_dataset_path = "data/processed_dataset/modified_passwords.csv"
 training_dataset_path = "data/training_dataset/training_dataset.csv"
 
-zxcvbn_score = 3
+"""
+processed_dataset_path = "data/new_dataset/common_passwords.csv"
+training_dataset_path = "data/processed_dataset/common_dataset_scored.csv"
+"""
+
+zxcvbn_score = 4
 
 df = pd.read_csv(processed_dataset_path)
 

@@ -3,8 +3,8 @@ from peft import PeftModel
 from transformers import AutoModelForCausalLM
 
 #update checkpoint and model
-checkpoint_path = "models/trained_model/checkpoint- "
-final_model_path = "models/final_model/final_model_v"
+checkpoint_path = "models/trained_model/checkpoint-700"
+final_model_path = "models/final_model/final_model_v5"
 base_model_name = "Qwen/Qwen2-0.5B"
 
 base_model = AutoModelForCausalLM.from_pretrained(base_model_name)

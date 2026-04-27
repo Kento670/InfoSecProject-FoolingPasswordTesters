@@ -5,8 +5,7 @@ import string
 processed_dataset_path = "data/processed_dataset/cleaned_dataset.csv"
 training_dataset_path = "data/processed_dataset/modified_passwords.csv"
 
-"""
-for v1
+
 phrases = ["summer", "winter", "fall", "spring", "test", "admin", "user"]
 symbols = ["@", "!", "#", "_",]
 years = list(range(1990, 2025))
@@ -24,7 +23,7 @@ def generate_pattern():
     ]
 
     return random.choice(formats)
-"""
+
 """
 for v2
 symbols = [
@@ -46,6 +45,9 @@ substitutions = {
     "s": "$", "S": "$",
 }
 """
+
+"""
+for v3
 
 symbols = [
     "!", "#", "$", "%", "&", 
@@ -74,6 +76,8 @@ def generate_pattern():
     ]
 
     return random.choice(formats)
+"""
+
 
 def substitute(pw, subs):
     possible = [ch for ch in pw if ch in subs]
@@ -108,7 +112,7 @@ modified_passwords = []
 for pw in passwords:
     modified_passwords.append(pw)
 
-    for _ in range(3):
+    for _ in range(1):
         pattern = generate_pattern()
         modified_passwords.append(pw + pattern)
         modified_passwords.append(pattern + pw)

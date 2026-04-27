@@ -5,8 +5,8 @@ from peft import PeftModel
 from zxcvbn import zxcvbn
 
 base_model_name = "Qwen/Qwen2-0.5B"
-final_model_path = "models/final_model/final_model_v4"
-output_path = "data/generated_passwords/verified_passwords.csv"
+final_model_path = "models/final_model/final_model_v5"
+output_path = "data/generated_passwords/verified_passwords_v5.csv"
 
 base_model = AutoModelForCausalLM.from_pretrained(base_model_name)
 model = PeftModel.from_pretrained(base_model, final_model_path)
