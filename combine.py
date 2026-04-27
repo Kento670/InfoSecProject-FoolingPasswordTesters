@@ -1,6 +1,5 @@
 import pandas as pd
 
-# Paths to your files
 first_csv = "data/generated_passwords/verified_passwords_v1.csv"    
 second_csv = "data/generated_passwords/verified_passwords_v5.csv"
 output_csv="data/generated_passwords/verified_passwords_1+5.csv"
