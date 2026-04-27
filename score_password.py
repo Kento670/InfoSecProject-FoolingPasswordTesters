@@ -1,22 +1,36 @@
+import argparse
+
 import pandas as pd
 from zxcvbn import zxcvbn
 
-processed_dataset_path = "data/processed_dataset/modified_passwords.csv"
-training_dataset_path = "data/training_dataset/training_dataset.csv"
 
-zxcvbn_score = 3
+DEFAULT_INPUT = "data/processed_dataset/modified_passwords.csv"
+DEFAULT_OUTPUT = "data/training_dataset/training_dataset.csv"
 
-df = pd.read_csv(processed_dataset_path)
 
-scored_passwords = [
-    pw for pw in df['password']
-    if zxcvbn(pw)['score'] >= zxcvbn_score
-]
+def main():
+    parser = argparse.ArgumentParser(
+        description="Keep passwords that score high on zxcvbn for model training."
+    )
+    parser.add_argument("--input", default=DEFAULT_INPUT)
+    parser.add_argument("--output", default=DEFAULT_OUTPUT)
+    parser.add_argument("--min-score", type=int, default=3)
+    parser.add_argument("--seed", type=int, default=47205)
+    args = parser.parse_args()
 
-df_scored = pd.DataFrame(scored_passwords, columns=['password'])
+    df = pd.read_csv(args.input)
 
-df_scored = df_scored.sample(frac=1).reset_index(drop=True)
+    scored_passwords = []
+    for password in df["password"].dropna().astype(str):
+        if zxcvbn(password)["score"] >= args.min_score:
+            scored_passwords.append(password)
 
-df_scored.to_csv(training_dataset_path, index=False)
+    df_scored = pd.DataFrame(scored_passwords, columns=["password"])
+    df_scored = df_scored.sample(frac=1, random_state=args.seed).reset_index(drop=True)
+    df_scored.to_csv(args.output, index=False)
 
-print(f"Training dataset saved to {training_dataset_path}")
+    print(f"Training dataset saved to {args.output}")
+
+
+if __name__ == "__main__":
+    main()

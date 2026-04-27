@@ -1,19 +1,25 @@
-from transformers import AutoTokenizer
+import argparse
+
 from peft import PeftModel
-from transformers import AutoModelForCausalLM
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
-#update checkpoint and model
-checkpoint_path = "models/trained_model/checkpoint- "
-final_model_path = "models/final_model/final_model_v"
-base_model_name = "Qwen/Qwen2-0.5B"
 
-base_model = AutoModelForCausalLM.from_pretrained(base_model_name)
+def main():
+    parser = argparse.ArgumentParser(description="Save a trained LoRA checkpoint for inference.")
+    parser.add_argument("--checkpoint", default="models/trained_model/checkpoint-800")
+    parser.add_argument("--output", default="models/final_model/final_model_v4")
+    parser.add_argument("--base-model", default="Qwen/Qwen2-0.5B")
+    args = parser.parse_args()
 
-model = PeftModel.from_pretrained(base_model, checkpoint_path)
+    base_model = AutoModelForCausalLM.from_pretrained(args.base_model)
+    model = PeftModel.from_pretrained(base_model, args.checkpoint)
+    tokenizer = AutoTokenizer.from_pretrained(args.base_model)
 
-tokenizer = AutoTokenizer.from_pretrained(base_model_name)
+    model.save_pretrained(args.output)
+    tokenizer.save_pretrained(args.output)
 
-model.save_pretrained(final_model_path)
-tokenizer.save_pretrained(final_model_path)
+    print(f"Done. Final model saved to {args.output}")
 
-print(f"Done. Final Model saved to {final_model_path}")
+
+if __name__ == "__main__":
+    main()

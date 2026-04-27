@@ -1,21 +1,13 @@
+import argparse
+
 import torch
 import pandas as pd
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from peft import PeftModel
 from zxcvbn import zxcvbn
 
-base_model_name = "Qwen/Qwen2-0.5B"
-final_model_path = "models/final_model/final_model_v4"
-output_path = "data/generated_passwords/verified_passwords.csv"
 
-base_model = AutoModelForCausalLM.from_pretrained(base_model_name)
-model = PeftModel.from_pretrained(base_model, final_model_path)
-tokenizer = AutoTokenizer.from_pretrained(final_model_path)
-
-model.to("cpu")
-model.eval()
-
-def generate_password():
+def generate_password(model, tokenizer):
     instructions = "Generate a password that fools a strength meter:\n"
     inputs = tokenizer(instructions, return_tensors="pt")
     instructions_len = inputs["input_ids"].shape[1]
@@ -35,23 +27,43 @@ def generate_password():
     password = tokenizer.decode(generated, skip_special_tokens=True)
     return password.replace("\n", "").strip()
 
-target = 10000
-batch_size = 200
-zxcvbn_score = 4
 
-strong_passwords = set()
+def main():
+    parser = argparse.ArgumentParser(
+        description="Generate zxcvbn-high passwords from the fine-tuned LoRA model."
+    )
+    parser.add_argument("--base-model", default="Qwen/Qwen2-0.5B")
+    parser.add_argument("--adapter", default="models/final_model/final_model_v4")
+    parser.add_argument("--output", default="data/generated_passwords/verified_passwords.csv")
+    parser.add_argument("--target", type=int, default=10000)
+    parser.add_argument("--batch-size", type=int, default=200)
+    parser.add_argument("--min-score", type=int, default=4)
+    args = parser.parse_args()
 
-while len(strong_passwords) < target:
-    print(f"Generating - Current password count: {len(strong_passwords)}")
+    base_model = AutoModelForCausalLM.from_pretrained(args.base_model)
+    model = PeftModel.from_pretrained(base_model, args.adapter)
+    tokenizer = AutoTokenizer.from_pretrained(args.adapter)
 
-    batch = [generate_password() for _ in range(batch_size)]
+    model.to("cpu")
+    model.eval()
 
-    for pw in batch:
-        score = zxcvbn(pw)["score"]
-        if score >= zxcvbn_score:
-            strong_passwords.add(pw)
+    strong_passwords = set()
 
-    df = pd.DataFrame(sorted(strong_passwords), columns=["password"])
-    df.to_csv(output_path, index=False)
+    while len(strong_passwords) < args.target:
+        print(f"Generating - Current password count: {len(strong_passwords)}")
 
-print(f"Done! Saved {len(strong_passwords)} strong passwords to {output_path}")
+        batch = [generate_password(model, tokenizer) for _ in range(args.batch_size)]
+
+        for password in batch:
+            score = zxcvbn(password)["score"]
+            if score >= args.min_score:
+                strong_passwords.add(password)
+
+        df = pd.DataFrame(sorted(strong_passwords), columns=["password"])
+        df.to_csv(args.output, index=False)
+
+    print(f"Done! Saved {len(strong_passwords)} strong passwords to {args.output}")
+
+
+if __name__ == "__main__":
+    main()
