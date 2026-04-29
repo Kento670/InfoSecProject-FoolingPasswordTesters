@@ -21,6 +21,6 @@ TRAINED_MODEL_DIR = MODEL_DIR / "trained_model"
 FINAL_MODEL_DIR = MODEL_DIR / "final_model" / "final_model_v5"
 
 DEFAULT_GENERATED_PATH = GENERATED_PASSWORDS_DIR / "verified_passwords_v5.csv"
-MERGED_GENERATED_PATH = GENERATED_PASSWORDS_DIR / "verified_passwords_1+5.csv"
+MERGED_GENERATED_PATH = GENERATED_PASSWORDS_DIR / "verified_passwords_1+5+6.csv"
 
 ZXCVBN_TARGET_SCORE = 4
