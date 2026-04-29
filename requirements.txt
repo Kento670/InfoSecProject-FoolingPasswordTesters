@@ -1,0 +1,7 @@
+pandas
+zxcvbn
+flask
+torch
+transformers
+datasets
+peft

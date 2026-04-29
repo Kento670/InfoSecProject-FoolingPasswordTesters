@@ -1,18 +1,28 @@
 import pandas as pd
 
-first_csv = "data/generated_passwords/verified_passwords_v1.csv"    
-second_csv = "data/generated_passwords/verified_passwords_v5.csv"
-output_csv="data/generated_passwords/verified_passwords_1+5.csv"
+from config import GENERATED_PASSWORDS_DIR, MERGED_GENERATED_PATH
 
-df_source = pd.read_csv(first_csv, header=None, names=["password"])
-df_dest = pd.read_csv(second_csv, header=None, names=["password"])
+first_csv = GENERATED_PASSWORDS_DIR / "verified_passwords_v1.csv"
+second_csv = GENERATED_PASSWORDS_DIR / "verified_passwords_v5.csv"
+
+
+def read_password_csv(path):
+    df = pd.read_csv(path)
+    if "password" not in df.columns:
+        df = pd.read_csv(path, header=None, names=["password"])
+    return df[["password"]].dropna()
+
+
+df_source = read_password_csv(first_csv)
+df_dest = read_password_csv(second_csv)
 
 combined = pd.concat([df_dest, df_source], ignore_index=True)
-combined = combined.drop_duplicates()
+combined["password"] = combined["password"].astype(str).str.strip()
+combined = combined[combined["password"].ne("")]
+combined = combined.drop_duplicates().sample(frac=1, random_state=47205).reset_index(drop=True)
 
-combined = combined.sample(frac=1).reset_index(drop=True)
+MERGED_GENERATED_PATH.parent.mkdir(parents=True, exist_ok=True)
+combined.to_csv(MERGED_GENERATED_PATH, index=False)
 
-combined.to_csv(output_csv, index=False, header=False)
-
-print(f"New merged file created: {output_csv}")
+print(f"New merged file created: {MERGED_GENERATED_PATH} ({len(combined)} unique passwords)")
 

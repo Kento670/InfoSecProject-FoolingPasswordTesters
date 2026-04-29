@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Password Meter Lab</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header class="topbar">
+        <div>
+            <h1>Password Meter Lab</h1>
+            <p>Generate, score, and test adversarial passwords.</p>
+        </div>
+        <a class="download" href="{{ url_for('download_generated') }}">Download CSV</a>
+    </header>
+
+    <main>
+        <section class="quick-stats" aria-label="Dataset summary">
+            {% for card in cards %}
+            <div class="stat">
+                <span>{{ card.value }}</span>
+                <p>{{ card.label }}</p>
+            </div>
+            {% endfor %}
+        </section>
+
+        <section class="workspace">
+            <div class="tool">
+                <h2>Check a Password</h2>
+                <form method="post">
+                    <input type="hidden" name="action" value="score">
+                    <label for="password">Password</label>
+                    <div class="row">
+                        <input id="password" name="password" value="{{ entered_password }}" placeholder="admin1997!spring!" autocomplete="off">
+                        <button type="submit">Score</button>
+                    </div>
+                </form>
+
+                {% if score_result %}
+                <div class="result">
+                    <div class="score">{{ score_result.score }}/4</div>
+                    <dl>
+                        <div><dt>Guesses</dt><dd>{{ score_result.guesses }}</dd></div>
+                        <div><dt>Fast offline crack time</dt><dd>{{ score_result.offline_fast_hashing }}</dd></div>
+                        <div><dt>Online crack time</dt><dd>{{ score_result.online_no_throttling }}</dd></div>
+                    </dl>
+                    <div class="chips">
+                        {% for feature in score_result.features %}
+                        <span class="{% if feature.active %}active{% endif %}">{{ feature.label }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="tool">
+                <h2>Generate Demo Passwords</h2>
+                <p class="muted">Creates a few meter-fooling examples instantly using the same pattern families as the training data.</p>
+                <form method="post">
+                    <input type="hidden" name="action" value="generate">
+                    <button type="submit">Generate 5</button>
+                </form>
+                {% if generated_now %}
+                <div class="password-list">
+                    {% for password in generated_now %}
+                    <code>{{ password }}</code>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Targeted Attack Test</h2>
+            <p class="muted">
+                A simple rule-based attacker uses seasons, years, symbols, and common roots to reproduce generated passwords.
+            </p>
+            <div class="attack-grid">
+                <div><strong>{{ "{:,}".format(attack_result.guesses) }}</strong><span>rule guesses</span></div>
+                <div><strong>{{ "{:,}".format(attack_result.cracked) }}</strong><span>matches found</span></div>
+                <div><strong>{{ "%.1f%%"|format(attack_result.cracked_percent * 100) }}</strong><span>dataset recovered</span></div>
+            </div>
+            <div class="password-list compact">
+                {% for password in attack_result.examples %}
+                <code>{{ password }}</code>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Baseline Comparison</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Dataset</th>
+                        <th>Avg score</th>
+                        <th>Score 4/4</th>
+                        <th>Avg length</th>
+                        <th>Season + year</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in baselines %}
+                    <tr>
+                        <td>{{ row.name }}</td>
+                        <td>{{ "%.2f"|format(row.avg_score) }}/4</td>
+                        <td>{{ row.score_4_percent }}</td>
+                        <td>{{ "%.1f"|format(row.avg_length) }}</td>
+                        <td>{{ row.season_year_percent }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="section">
+            <h2>Generated Dataset Samples</h2>
+            <div class="password-list">
+                {% for password in sample_passwords %}
+                <code>{{ password }}</code>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+</body>
+</html>

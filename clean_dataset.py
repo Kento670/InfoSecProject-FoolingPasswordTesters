@@ -1,18 +1,14 @@
 import pandas as pd
 
-new_dataset_path = "data/new_dataset/common_passwords.csv"
-processed_dataset_path = "data/processed_dataset/cleaned_dataset.csv"
+from config import CLEANED_PASSWORDS_PATH, RAW_PASSWORDS_PATH
 
-
-# v1 = 4 - 6
-# v2 = 6 - 8
-# v3 = 3 - 9
-# v3 = 3 - 9
 min_password_length = 3
 max_password_length = 9
 
-df = pd.read_csv(new_dataset_path)
+df = pd.read_csv(RAW_PASSWORDS_PATH)
 df = df[['password']]
+df = df.dropna(subset=['password'])
+df['password'] = df['password'].astype(str)
 
 df = df[df['password'].str.len() >= min_password_length]
 df = df[df['password'].str.len() <= max_password_length]
@@ -20,6 +16,7 @@ df = df[df['password'].str.len() <= max_password_length]
 df = df[~df['password'].str.isdigit()]
 
 df = df.drop_duplicates()
-df.to_csv(processed_dataset_path, index = False)
+CLEANED_PASSWORDS_PATH.parent.mkdir(parents=True, exist_ok=True)
+df.to_csv(CLEANED_PASSWORDS_PATH, index=False)
 
-print(f"Done. Cleaned dataset saved to {processed_dataset_path}")
+print(f"Done. Cleaned {len(df)} passwords and saved to {CLEANED_PASSWORDS_PATH}")

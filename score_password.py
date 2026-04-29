@@ -1,28 +1,20 @@
 import pandas as pd
 from zxcvbn import zxcvbn
 
+from config import MODIFIED_PASSWORDS_PATH, TRAINING_DATASET_PATH, ZXCVBN_TARGET_SCORE
 
-processed_dataset_path = "data/processed_dataset/modified_passwords.csv"
-training_dataset_path = "data/training_dataset/training_dataset.csv"
-
-"""
-processed_dataset_path = "data/new_dataset/common_passwords.csv"
-training_dataset_path = "data/processed_dataset/common_dataset_scored.csv"
-"""
-
-zxcvbn_score = 4
-
-df = pd.read_csv(processed_dataset_path)
+df = pd.read_csv(MODIFIED_PASSWORDS_PATH).dropna(subset=["password"])
 
 scored_passwords = [
     pw for pw in df['password']
-    if zxcvbn(pw)['score'] >= zxcvbn_score
+    if zxcvbn(str(pw))['score'] >= ZXCVBN_TARGET_SCORE
 ]
 
 df_scored = pd.DataFrame(scored_passwords, columns=['password'])
 
-df_scored = df_scored.sample(frac=1).reset_index(drop=True)
+df_scored = df_scored.sample(frac=1, random_state=47205).reset_index(drop=True)
 
-df_scored.to_csv(training_dataset_path, index=False)
+TRAINING_DATASET_PATH.parent.mkdir(parents=True, exist_ok=True)
+df_scored.to_csv(TRAINING_DATASET_PATH, index=False)
 
-print(f"Training dataset saved to {training_dataset_path}")
+print(f"Training dataset saved to {TRAINING_DATASET_PATH} ({len(df_scored)} passwords scoring {ZXCVBN_TARGET_SCORE}+)")
