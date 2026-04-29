@@ -15,7 +15,8 @@ The core experiment fine-tunes a small language model on weak-password transform
 
 - `verified_passwords_v1.csv`: 10,095 generated passwords
 - `verified_passwords_v5.csv`: 10,042 generated passwords
-- `verified_passwords_1+5.csv`: merged adversarial set with about 19,500 unique passwords
+- `verified_passwords_v6.csv`: 10,055 generated passwords
+- `verified_passwords_1+5+6.csv`: merged adversarial set with about 29,493 unique passwords
 
 These outputs are designed to score well on `zxcvbn`, but many still contain predictable structures such as seasons, years, roles, common words, and simple symbol insertion.
 
